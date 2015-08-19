@@ -1,32 +1,59 @@
 //Code for SinglePlayer Game goes here
+//var xVel, sizeX, sizeY, xPos, yPos, paused, inGameMenu;
 
-var fps, canvas, ctx;
-var xVel = 0; 
-var sizeX = 80; 
-var sizeY = 20;
-var xPos = (800/2) - (sizeX/2);
-var yPos = 480 - (sizeY + 10);
 
 function Game(){
-	canvas = document.getElementById("screen");
-    ctx = canvas.getContext("2d");
-    fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
-    GameLoopManager.run(GameTick);
+	this.paused = false;
+	this.inGameMenu = null;
+
+	//Player
+	this. player = new Player(360, 450, 80, 20, 3)
 }
 
-function GameTick(elapsed){
+Game.prototype.tick = function(elapsed){
 	fps.update(elapsed);	//Shows a fps meter
+	this.logic(elapsed);
+	this.render();
+}
+
+Game.prototype.logic = function(elapsed){
+	// --- Input
+	InputManager.padUpdate();
 
 	//Game Logic
-	xPos += xVel * elapsed;
-	if ( (xPos <= 0 && xVel < 0) || (xPos >= canvas.width-sizeX && xVel > 0) )
-        xVel = 0;
+	if (InputManager.padPressed & InputManager.PAD.CANCEL){
+        this.paused = true;
+		this.startInGameMenu();
+    }
 
-    //Rendering
+    if (!this.paused){
+    	this.player.logic(elapsed);
+    }
+
+
+}
+
+Game.prototype.render = function(){
+	//Rendering
     // Clear the screen
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     // Render objects
-    ctx.fillStyle = "white"
-    ctx.fillRect(xPos, yPos, sizeX, sizeY);
+    this.player.render();
+}
+
+Game.prototype.startInGameMenu = function()
+{
+	InputManager.reset();
+	var bindThis = this;
+	this.InGameMenu = new Menu("In-game Menu",
+			[ "Continue", "Quit" ],
+			"",
+			70, 50, 400,
+			function(numItem) {
+				if (numItem == 0) { GameLoopManager.run(function(elapsed) { bindThis.tick(elapsed); }); bindThis.paused = false; bindThis.inGameMenu = null;  }
+				else if (numItem == 1) startMainMenu();
+			},
+			function(elapsed) { bindThis.render(elapsed); });
+	GameLoopManager.run(function(elapsed) { bindThis.InGameMenu.tick(elapsed); });
 }
