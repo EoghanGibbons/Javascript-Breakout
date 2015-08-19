@@ -29,13 +29,13 @@ Client.prototype.join = function(name)
 
 
 //To send an object to the server
-Client.prototype.send = function(movedPositions)
+Client.prototype.send = function(x, y)
 {
   console.log("game.net was sent something")
   var data={};    
-  data.type="updateLogic";
-  data.xPos = movedPositions[0];
-  data.yPos = movedPositions[1];
+  data.type="paddleUpdate";
+  data.xPos = x;
+  data.yPos = y;
   
   game.net.ws.send(JSON.stringify(data));
 }

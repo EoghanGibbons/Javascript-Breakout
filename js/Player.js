@@ -1,5 +1,4 @@
-Player = function(x, y, width, height, lives)
-{
+Player = function(x, y, width, height, lives){
 	this.x = x;
 	this.y = y;
 	this.width = width;
@@ -9,14 +8,15 @@ Player = function(x, y, width, height, lives)
 
 Player.prototype.logic = function(elapsed)
 {
-	if (this.lives > 0)
-	{
-		this.x = InputManager.lastMouseX-(this.width/2);
-	}
+	this.x = InputManager.lastMouseX-(this.width/2);
 }
 
 Player.prototype.render = function()
 {
 	ctx.fillStyle = "white";
 	ctx.fillRect(this.x, this.y, this.width, this.height);
+}
+
+Player.prototype.setPosition =function(pXPos){
+	this.x = pXPos;
 }
