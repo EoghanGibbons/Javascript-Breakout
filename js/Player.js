@@ -3,7 +3,7 @@ Player = function(x, y, width, height, lives){
 	this.y = y;
 	this.width = width;
 	this.height = height; 
-	this.lives = lives
+	this.lives = lives;
 }
 
 Player.prototype.logic = function(elapsed)

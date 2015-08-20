@@ -2,12 +2,17 @@
 function Game(){
 	this.paused = false;
 	this.inGameMenu = null;
+	this.gameOverMenu = null;
 	this.bricks;
+	this.level = 1;
+	this.NROWS = 9;
+	this.NCOLS = 5;
+	this.levelComplete;
 
 	//Player
 	this.player = new Player(360, 450, 80, 20, 3);
-	this.ball = new Ball(10, 400, 400, 200, 0);
-	this.initBricks();
+	this.ball = new Ball(10, 400, 300, 0, 200);
+	this.initBricks(1);
 }
 
 Game.prototype.tick = function(elapsed){
@@ -23,7 +28,22 @@ Game.prototype.logic = function(elapsed){
 	//Game Logic
 	if (this.player.lives == 0){
 		this.gameOver = true;
+		this.startGameOverMenu();
 	}
+
+	this.levelComplete=true;
+	for (i=0; i < this.NROWS; i++) {
+    	for (j=0; j < this.NCOLS; j++) {
+    		if (this.bricks[i][j].health > 0){
+    			this.levelComplete = false;
+    		}
+    	}
+    }
+    if (this.levelComplete){
+    	this.level += 1;
+    	this.NCOLS += 1;
+    	this.initBricks(this.level);
+    }
 
 	else{
 		if (InputManager.padPressed & InputManager.PAD.CANCEL){
@@ -34,10 +54,12 @@ Game.prototype.logic = function(elapsed){
     	if (!this.paused){
     		if (this.ball.outOfBounds){
     			this.player.lives += -1;
-    			this.ball.setPosition(400,400);
-    			this.ball.setVelocity(50,-100);
+    			this.ball.setPosition(400,300);
+    			this.ball.setVelocity(0,200);
     			this.ball.outOfBounds = false;
     		}
+
+    		this.checkCollisions();
 
     		this.player.logic(elapsed);
     		this.ball.logic(elapsed);
@@ -52,10 +74,19 @@ Game.prototype.render = function(){
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     // Render objects
-    this.player.render();
-    this.ball.render();
+    if(!this.gameOver){
+    	this.player.render();
+    	this.ball.render();
+    }
+    for (i=0; i < this.NROWS; i++) { //iterate through the bricks array and call their render functions
+    	for (j=0; j < this.NCOLS; j++) {
+    		if (this.bricks[i][j].health > 0){
+      			this.bricks[i][j].render(j);
+      		}
+    	}
+  	}
+    
     this.drawHUD();
-    //console.log(this.ball.x, this.ball.y);
 }
 
 Game.prototype.drawHUD = function(){
@@ -63,6 +94,7 @@ Game.prototype.drawHUD = function(){
 	ctx.fillStyle = "white";
 	ctx.font = "20px sans-serif";
 	ctx.fillText(" Lives: " + this.player.lives, 3, 460);
+	ctx.fillText(" Level: " + this.level, 700, 460);
 	if (this.gameOver)
 	{
 		ctx.textAlign = "center";
@@ -72,14 +104,10 @@ Game.prototype.drawHUD = function(){
 	}
 }
 
-Game.prototype.startInGameMenu = function()
-{
+Game.prototype.startInGameMenu = function(){
 	InputManager.reset();
 	var bindThis = this;
-	this.InGameMenu = new Menu("In-game Menu",
-			[ "Continue", "Quit" ],
-			"",
-			70, 50, 400,
+	this.InGameMenu = new Menu("In-game Menu", [ "Continue", "Quit" ], "", 70, 50, 400,
 			function(numItem) {
 				if (numItem == 0) { GameLoopManager.run(function(elapsed) { bindThis.tick(elapsed); }); bindThis.paused = false; bindThis.inGameMenu = null;  }
 				else if (numItem == 1) startMainMenu();
@@ -88,6 +116,57 @@ Game.prototype.startInGameMenu = function()
 	GameLoopManager.run(function(elapsed) { bindThis.InGameMenu.tick(elapsed); });
 }
 
-Game.prototype.initBricks = function(){
+Game.prototype.initBricks = function(health){  //Creates a 2D array of Brick objects and stores them by their row and collumn
+	var brickHealth;
+	this.bricks = new Array(this.NROWS);
+	for (i=0; i < this.NROWS; i++) {
+    	this.bricks[i] = new Array(this.NCOLS);
+    	for (j=0; j < this.NCOLS; j++) {
+    		brickHealth = health;
+      		this.bricks[i][j] = new Brick( (i) * (10 +80) , (1+j) * (10 + 20), brickHealth);
+    	}
+  	}
+}
 
+Game.prototype.startGameOverMenu = function(){
+	InputManager.reset();
+	var bindThis = this;
+	this.InGameMenu = new Menu("", [ "Menu" ], "", canvas.height/1.5, 50, 400,
+			function(numItem) {
+				if (numItem == 0)
+					startMainMenu()
+			},
+			function(elapsed) { bindThis.render(elapsed); });
+	GameLoopManager.run(function(elapsed) { bindThis.InGameMenu.tick(elapsed); });
+}
+
+Game.prototype.checkCollisions = function(){
+	//First check to see if the ball is colliding with the player
+	if ((this.ball.x + this.ball.radius >= this.player.x) && (this.ball.x - this.ball.radius <= this.player.x + this.player.width) && (this.ball.y + this.ball.radius >= this.player.y)){
+		this.ball.bounce(false);
+		this.ball.setVelocity( (this.ball.x - (this.player.x + this.player.width/2)) * 10,this.ball.velY)
+	}
+	
+	//Next check to see if the ball is colliding with any of the blocks
+	for (i=0; i < this.NROWS; i++) {
+    	for (j=0; j < this.NCOLS; j++) {
+    		if (this.bricks[i][j].health > 0){//To avoid checking collisions with Bricks that are no longer there
+    			if ((this.ball.x + this.ball.radius >= this.bricks[i][j].x) && 
+    				(this.ball.x - this.ball.radius <= this.bricks[i][j].x + this.bricks[i][j].width) && 
+    				(this.ball.y + this.ball.radius >= this.bricks[i][j].y)&&
+    				(this.ball.y - this.ball.radius <= this.bricks[i][j].y + this.bricks[i][j].height))
+    			{//opening bracket is here for easy reading purposes
+    				//this.ball.bounce(true);
+    				if((this.ball.x < this.bricks[i][j].x) || (this.ball.x > this.bricks[i][j].x + this.bricks[i][j].width)){//the ball has hit the side of one of the blocks
+    					this.ball.bounce(true);
+    				}
+    				else{
+    					this.ball.bounce(false);
+    				}
+    				this.bricks[i][j].health += -1;
+    				//console.log(this.bricks[i][j].hasPrize);
+    			}
+    		}
+    	}
+  	}
 }
