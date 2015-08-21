@@ -12,7 +12,7 @@ function Game(){
 	//Player
 	this.player = new Player(360, 450, 80, 20, 3);
 	this.ball = new Ball(10, 400, 300, 0, 200);
-	this.initBricks(1);
+	this.initBricks();
 }
 
 Game.prototype.tick = function(elapsed){
@@ -45,6 +45,7 @@ Game.prototype.logic = function(elapsed){
     	this.initBricks(this.level);
 		this.ball.setPosition(400,300);
 		this.ball.setVelocity(0,200);
+    	this.player.lives += 1;
     }
 
 	else{
@@ -123,7 +124,7 @@ Game.prototype.initBricks = function(){  //Creates a 2D array of Brick objects a
 	for (i=0; i < this.NROWS; i++) {
     	this.bricks[i] = new Array(this.NCOLS);
     	for (j=0; j < this.NCOLS; j++) {
-    		if (j<this.level){
+    		if ((j<this.level) && (this.level >1)){
       			this.bricks[i][j] = new Brick( (i) * (10 +80) , (1+j) * (10 + 20), this.level);
       		}
       		else{
