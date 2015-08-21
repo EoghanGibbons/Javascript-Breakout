@@ -64,8 +64,8 @@ Game.prototype.logic = function(elapsed){
 
     		this.checkCollisions();
 
-    		this.player.logic(elapsed);
     		this.ball.logic(elapsed);
+    		this.player.logic(elapsed);
     	}
     }
 }

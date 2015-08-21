@@ -2,7 +2,7 @@
 function Client()
 {
   //For testing... change the ip (the host) when you are running on a device
-  var host='149.153.102.21';
+  var host='127.0.0.1';
   var port=8080;
 
   this.messageHandler = new MessageHandler();
@@ -31,7 +31,6 @@ Client.prototype.join = function(name)
 //To send an object to the server
 Client.prototype.send = function(x, y)
 {
-  console.log("game.net was sent something")
   var data={};    
   data.type="paddleUpdate";
   data.xPos = x;

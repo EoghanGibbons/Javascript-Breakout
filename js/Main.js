@@ -6,7 +6,6 @@ ctx = null;
 
 var game;
 var menu;
-var multiPlayerGame;
 var splash;
 
 function main()
@@ -55,5 +54,10 @@ function startSplashScreen(){
 }
 
 function startMultiPlayerGame(){
-	console.log("starting multiPlayerGame");
+	//console.log("starting multiPlayerGame");
+	GameLoopManager.stop();
+	menu = null;
+	game = new MultiPlayerGame();
+	InputManager.reset();
+	GameLoopManager.run(function(elapsed) { game.tick(elapsed); });
 }
