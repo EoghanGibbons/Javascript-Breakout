@@ -43,6 +43,8 @@ Game.prototype.logic = function(elapsed){
     	this.level += 1;
     	this.NCOLS += 1;
     	this.initBricks(this.level);
+		this.ball.setPosition(400,300);
+		this.ball.setVelocity(0,200);
     }
 
 	else{
@@ -116,14 +118,17 @@ Game.prototype.startInGameMenu = function(){
 	GameLoopManager.run(function(elapsed) { bindThis.InGameMenu.tick(elapsed); });
 }
 
-Game.prototype.initBricks = function(health){  //Creates a 2D array of Brick objects and stores them by their row and collumn
-	var brickHealth;
+Game.prototype.initBricks = function(){  //Creates a 2D array of Brick objects and stores them by their row and collumn
 	this.bricks = new Array(this.NROWS);
 	for (i=0; i < this.NROWS; i++) {
     	this.bricks[i] = new Array(this.NCOLS);
     	for (j=0; j < this.NCOLS; j++) {
-    		brickHealth = health;
-      		this.bricks[i][j] = new Brick( (i) * (10 +80) , (1+j) * (10 + 20), brickHealth);
+    		if (j<this.level){
+      			this.bricks[i][j] = new Brick( (i) * (10 +80) , (1+j) * (10 + 20), this.level);
+      		}
+      		else{
+      			this.bricks[i][j] = new Brick( (i) * (10 +80) , (1+j) * (10 + 20), 1);
+      		}
     	}
   	}
 }
