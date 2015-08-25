@@ -14,6 +14,25 @@ MessageHandler.prototype.handleMessage = function(evt)
 	console.log(type);
 	console.log(data);
 
+	if(type=="state")
+	{
+		//convert data into an int
+		data = parseInt(data);
+		//console.log("data: "+data);
+
+		if(data=="WAITING_FOR_PLAYERS")
+		{
+			console.log("WAITING_FOR_PLAYERS");
+		}
+		if(data=="SETTING_UP_GAME")
+		{
+			console.log("STARTING_GAME");
+			game.init();
+		}		
+
+		game.gameState.updateGameState(data);
+	}
+
 	//handles a custom message
 	if(type=="paddleUpdate"){
 		console.log("accepting other players move");

@@ -1,7 +1,6 @@
 //Code for Multiplayer Game goes here
 
 function MultiPlayerGame(){
-	this.net = new Client();
 	this.player = new Player(360, 450, 80, 20, 3);
 	this.androidPlayer = new Player(360, 10, 80, 20, 3);
 	this.ball = new Ball(10, 400, 300, 0, 200);
@@ -9,7 +8,7 @@ function MultiPlayerGame(){
 }
 
 MultiPlayerGame.prototype.joinMultiplayerGame = function(){
-	net = new Client();
+	this.net = new Client();
 }
 
 MultiPlayerGame.prototype.tick = function(elapsed){

@@ -2,7 +2,7 @@
 function Client()
 {
   //For testing... change the ip (the host) when you are running on a device
-  var host='127.0.0.1';
+  var host='89.100.117.199';
   var port=8080;
 
   this.messageHandler = new MessageHandler();

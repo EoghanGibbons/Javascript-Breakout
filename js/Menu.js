@@ -19,10 +19,10 @@ Menu.prototype.render = function(elapsed)
 		this.backgroundCallback(elapsed);
 	else
 	{
-		var lingrad = ctx.createLinearGradient(0,0,0,canvas.height);
-		lingrad.addColorStop(0, '#000');
-		lingrad.addColorStop(1, '#023');
-		ctx.fillStyle = lingrad;
+		//var lingrad = ctx.createLinearGradient(0,0,0,canvas.height);
+		//lingrad.addColorStop(0, '#000');
+		//lingrad.addColorStop(1, '#023');
+		ctx.fillStyle = "black"//lingrad;
 		ctx.fillRect(0,0,canvas.width, canvas.height);
 	}
 	
@@ -32,14 +32,14 @@ Menu.prototype.render = function(elapsed)
 	var y = this.y;
 	if (this.title)
 	{
-		ctx.font = Math.floor(this.size*1.3).toString() + "px Times New Roman";
+		ctx.font = Math.floor(this.size*1).toString() + "px Times New Roman";
 		ctx.fillText(this.title, canvas.width/2, y);
 		y += this.size;
 	}
 
 	for (var i = 0; i < this.items.length; ++i)
 	{
-		var size = Math.floor(this.size*0.8);
+		var size = Math.floor(this.size*0.5);
 		if (i == this.selectedItem)
 		{
 			var v = Math.floor(127*Math.sin(GameLoopManager.lastTime*0.04) + 127);

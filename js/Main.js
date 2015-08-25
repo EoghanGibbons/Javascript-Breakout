@@ -59,5 +59,6 @@ function startMultiPlayerGame(){
 	menu = null;
 	game = new MultiPlayerGame();
 	InputManager.reset();
+	game.joinMultiplayerGame();
 	GameLoopManager.run(function(elapsed) { game.tick(elapsed); });
 }

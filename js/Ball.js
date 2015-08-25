@@ -11,11 +11,11 @@ Ball.prototype.logic = function(elapsed){
 	this.x += this.velX*elapsed;
 	this.y += this.velY*elapsed;
 
-	if (((this.x + this.radius) >= 800) || ((this.x - this.radius) <= 0)){
+	if ((((this.x + this.radius) >= 800) &&(this.velX>0)) || ( ((this.x - this.radius) <= 0) &&(this.velX<0) ) ){
 		this.bounce(true);
 	}
 
-	if ((this.y - this.radius) <= 0){
+	if (((this.y - this.radius) <= 0)){
 		this.bounce(false);
 	}
 	else if ((this.y + this.radius) >= 500){
