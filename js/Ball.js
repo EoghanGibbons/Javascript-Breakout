@@ -38,6 +38,7 @@ Ball.prototype.bounce = function(axis){
 	else{
 		this.velY = this.velY *-1;
 	}
+	bounceEffect.play();
 	//console.log("calling bounce");
 }
 

@@ -53,6 +53,12 @@ class MessageHandler:
 		   
 		elif type == "updateState":
 			self.updateState(data, pid)
+		elif type == "ballUpdate":
+			self.sendMessage('IOSPlayer', type, data)
+		elif type == "paddleUpdate":
+			self.sendMessage('IOSPlayer', type, date)
+		elif type == "iosPaddleUpdate":
+			self.sendMessage('Android Client', type, data)
 		else:
 			msg = 'Error reading game request. Please make sure message type is either join, updateState, or...'
 			message={'type':'error', "data":msg}

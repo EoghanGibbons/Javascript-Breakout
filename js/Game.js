@@ -137,7 +137,7 @@ Game.prototype.initBricks = function(){  //Creates a 2D array of Brick objects a
 Game.prototype.startGameOverMenu = function(){
 	InputManager.reset();
 	var bindThis = this;
-	this.InGameMenu = new Menu("", [ "Menu" ], "", canvas.height/1.5, 50, 400,
+	this.InGameMenu = new Menu("Game Over", [ "Menu" ], "", canvas.height/1.5, 50, 400,
 			function(numItem) {
 				if (numItem == 0)
 					startMainMenu()

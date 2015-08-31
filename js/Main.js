@@ -7,6 +7,7 @@ ctx = null;
 var game;
 var menu;
 var splash;
+var bounceEffect;
 
 function main()
 {
@@ -16,6 +17,12 @@ function main()
 	ctx = canvas.getContext("2d");
 	fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
 	InputManager.connect(document, canvas);
+	this.music = new Audio("assets/mainMenuMusic.mp3");
+	this.music.volume = .3;
+	this.music.addEventListener('ended',function(){
+		game.loopSound.currentTime = 0;
+		game.loopSound.play();
+	},false);
 
 	startSplashScreen();
 }
@@ -23,17 +30,22 @@ function main()
 function startGame(){
 	GameLoopManager.stop();
 	menu = null;
+	this.music.pause();
+	this.music.currentTime = 0;
+	this.bounceEffect = new Audio("assets/boing.wav")
+	this.bounceEffect.volume = .3;
 	game = new Game();
 	InputManager.reset();
 	GameLoopManager.run(function(elapsed) { game.tick(elapsed); });
 }
 
 function startMainMenu(){
+	this.music.play();
 	GameLoopManager.stop();
 	game = null;
     InputManager.reset();
 	menu = new Menu("MULTIPLAYER BREAKOUT",	
-					[ "Singleplayer", "Multiplayer", "Help", "Credits" ],
+					[ "Singleplayer", "Multiplayer"],
 					"",
 					70, 50, 400,
 					function(numItem) {

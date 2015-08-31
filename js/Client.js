@@ -23,7 +23,7 @@ Client.prototype.join = function(name)
 {
   data={};    
   data.type="join";
-  data.pid=name;
+  data.pid="IOSPlayer";
   this.ws.send(JSON.stringify(data));
 }
 
@@ -34,7 +34,6 @@ Client.prototype.send = function(x, y)
   var data={};    
   data.type="paddleUpdate";
   data.xPos = x;
-  data.yPos = y;
   
   game.net.ws.send(JSON.stringify(data));
 }
