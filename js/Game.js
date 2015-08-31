@@ -5,6 +5,7 @@ function Game(){
 	this.gameOverMenu = null;
 	this.bricks;
 	this.level = 1;
+    this.score = 0;
 	this.NROWS = 9;
 	this.NCOLS = 5;
 	this.levelComplete;
@@ -28,7 +29,14 @@ Game.prototype.logic = function(elapsed){
 	//Game Logic
 	if (this.player.lives == 0){
 		this.gameOver = true;
-		this.startGameOverMenu();
+        if (this.score > sessionStorage.score){
+            this.startGameOverMenu("New Highscore: " + this.score);
+            sessionStorage.score = this.score;
+        }
+        else{
+            this.startGameOverMenu("Game Over");
+        }
+		
 	}
 
 	this.levelComplete=true;
@@ -97,14 +105,10 @@ Game.prototype.drawHUD = function(){
 	ctx.fillStyle = "white";
 	ctx.font = "20px sans-serif";
 	ctx.fillText(" Lives: " + this.player.lives, 3, 460);
-	ctx.fillText(" Level: " + this.level, 700, 460);
-	if (this.gameOver)
-	{
-		ctx.textAlign = "center";
-		ctx.fillStyle = "red";
-		ctx.font = "60px sans-serif";
-		ctx.fillText("Game Over", canvas.width/2, canvas.height/2);
-	}
+	ctx.fillText(" Score: " + this.score, 700, 460);
+    if (this.gameOver){
+        //ctx.fillText("#1: " sessionStorage.score, 370, 400);
+    }
 }
 
 Game.prototype.startInGameMenu = function(){
@@ -134,16 +138,17 @@ Game.prototype.initBricks = function(){  //Creates a 2D array of Brick objects a
   	}
 }
 
-Game.prototype.startGameOverMenu = function(){
-	InputManager.reset();
+Game.prototype.startGameOverMenu = function(title){
+    inGameMenu = null;
+	//InputManager.reset();
 	var bindThis = this;
-	this.InGameMenu = new Menu("Game Over", [ "Menu" ], "", canvas.height/1.5, 50, 400,
+	this.gameOverMenu = new Menu(title, [ "Menu" ], "", 150, 50, 400,
 			function(numItem) {
 				if (numItem == 0)
 					startMainMenu()
 			},
 			function(elapsed) { bindThis.render(elapsed); });
-	GameLoopManager.run(function(elapsed) { bindThis.InGameMenu.tick(elapsed); });
+	GameLoopManager.run(function(elapsed) { bindThis.gameOverMenu.tick(elapsed); });
 }
 
 Game.prototype.checkCollisions = function(){
@@ -170,6 +175,7 @@ Game.prototype.checkCollisions = function(){
     					this.ball.bounce(false);
     				}
     				this.bricks[i][j].health += -1;
+                    this.score++;
     				//console.log(this.bricks[i][j].hasPrize);
     			}
     		}

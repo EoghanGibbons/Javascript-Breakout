@@ -14,6 +14,12 @@ function main()
 	//change version number if you suspect a problem with caching
 	console.log("version 1");
 	canvas = document.getElementById("screen");
+	if( sessionStorage.score ){
+		sessionStorage.score = Number(sessionStorage.score);
+	}
+	else{
+		sessionStorage.score = 1;
+	}
 	ctx = canvas.getContext("2d");
 	fps = new FPSMeter("fpsmeter", document.getElementById("fpscontainer"));
 	InputManager.connect(document, canvas);
